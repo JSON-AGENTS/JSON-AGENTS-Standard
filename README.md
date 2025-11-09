@@ -5,9 +5,23 @@
 [![JSON Schema](https://img.shields.io/badge/JSON%20Schema-2020--12-purple.svg)](https://json-schema.org/draft/2020-12/json-schema-core.html)
 [![Standard](https://img.shields.io/badge/standard-RFC%208259-orange.svg)](https://datatracker.ietf.org/doc/html/rfc8259)
 [![Media Type](https://img.shields.io/badge/media%20type-application%2Fagents%2Bjson-teal.svg)](#)
-[![Status](https://img.shields.io/badge/status-stable-brightgreen.svg)](./agents-json.md)
+[![Status](https://img.shields.io/badge/status-draft-yellow.svg)](./agents-json.md)
 
 > **A Universal JSON Specification for Portable AI Agents**
+
+---
+
+> [!WARNING]
+> **Draft Specification - Work in Progress**
+> 
+> This specification is currently in **draft status** and under active development. While the v1.0.0 release represents a complete and functional specification, it has not yet been formally adopted by any standards body or reached community consensus.
+> 
+> - The specification may change based on community feedback and implementation experience
+> - Breaking changes are possible before final standardization
+> - Early implementers should expect potential revisions
+> - Contributions, feedback, and discussion are welcomed and encouraged
+> 
+> See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to participate in the specification's development.
 
 ---
 
