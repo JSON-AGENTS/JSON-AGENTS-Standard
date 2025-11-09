@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/capabilities/retrieval.json",
+  "title": "Capability: Retrieval",
+  "description": "Standardized declaration for retrieval-augmented generation or document search.",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "const": "retrieval"
+    },
+    "description": {
+      "type": "string",
+      "default": "Retrieve relevant documents or passages from one or more data sources."
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "Retrieval query parameters.",
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "User query or semantic search text."
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results to return."
+        },
+        "filters": {
+          "type": "object",
+          "description": "Optional structured filters (e.g. metadata constraints).",
+          "additionalProperties": true
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional source identifier or corpus name."
+        }
+      },
+      "required": ["query"]
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "Standardized retrieval response.",
+      "additionalProperties": false,
+      "properties": {
+        "results": {
+          "type": "array",
+          "description": "Ranked retrieval results.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": { "type": "string" },
+              "score": { "type": "number" },
+              "title": { "type": "string" },
+              "snippet": { "type": "string" },
+              "uri": { "type": "string", "format": "uri" },
+              "metadata": { "type": "object" }
+            }
+          }
+        }
+      },
+      "required": ["results"]
+    }
+  },
+  "examples": [
+    {
+      "id": "retrieval",
+      "description": "Retrieve documents answering technical questions."
+    }
+  ]
+}

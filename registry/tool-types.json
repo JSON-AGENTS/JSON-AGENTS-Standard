@@ -1,0 +1,31 @@
+{
+  "$id": "https://agents.json.org/registry/tool-types.json",
+  "description": "Canonical registry of recommended tool.type values for Agents.JSON manifests.",
+  "version": "2025-11-09",
+  "tool_types": [
+    {
+      "id": "http",
+      "description": "Network-accessible API endpoint returning JSON or other formats."
+    },
+    {
+      "id": "function",
+      "description": "In-process or in-runtime callable function."
+    },
+    {
+      "id": "plugin",
+      "description": "Logical plugin or integration, may wrap multiple calls or APIs."
+    },
+    {
+      "id": "system",
+      "description": "Underlying platform operation (filesystem, process, scheduler), usually gated by policies."
+    },
+    {
+      "id": "mcp",
+      "description": "Tool provided via a Model Context Protocol–style or similar server."
+    },
+    {
+      "id": "custom",
+      "description": "Non-standard or composite tool; semantics defined by implementation."
+    }
+  ]
+}

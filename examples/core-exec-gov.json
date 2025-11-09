@@ -1,0 +1,109 @@
+{
+  "manifest_version": "1.0",
+  "profiles": ["core", "exec", "gov"],
+  "agent": {
+    "id": "ajson://example/support-assistant",
+    "name": "Support Assistant",
+    "description": "Answers internal support questions using corporate knowledge.",
+    "version": "2.3.0",
+    "license": "Apache-2.0",
+    "tags": ["support", "internal"]
+  },
+  "capabilities": [
+    {
+      "id": "qa",
+      "description": "Answer user questions from internal documents."
+    },
+    {
+      "id": "retrieval",
+      "description": "Retrieve relevant internal documents.",
+      "schema": "https://agents.json.org/schema/capabilities/retrieval.json"
+    }
+  ],
+  "tools": [
+    {
+      "id": "tool://internal-search",
+      "name": "Internal Search",
+      "description": "Search across internal indexed documents.",
+      "type": "http",
+      "endpoint": "https://search.internal.corp/query",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 20 }
+        },
+        "required": ["q"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "url": { "type": "string", "format": "uri" },
+                "snippet": { "type": "string" }
+              },
+              "required": ["title", "url"]
+            }
+          }
+        },
+        "required": ["results"]
+      },
+      "auth": {
+        "method": "vault",
+        "ref": "secret/data/agents-json/internal-search"
+      }
+    }
+  ],
+  "modalities": {
+    "input": ["text"],
+    "output": ["text", "json"]
+  },
+  "context": {
+    "window": 8192,
+    "strategy": "conversation",
+    "persistent": true
+  },
+  "runtime": {
+    "type": "container",
+    "entrypoint": "docker.io/example/support-assistant:2.3.0",
+    "resources": {
+      "cpu_cores_min": 2,
+      "memory_mb_min": 2048,
+      "accelerator": "none"
+    }
+  },
+  "security": {
+    "sandbox": "container",
+    "network_zone": "internal",
+    "auth_context": "ajson://corp/iam/agents/support",
+    "sensitive_data_handling": "PII must not be written to logs or external storage."
+  },
+  "policies": [
+    {
+      "id": "deny-external-http",
+      "description": "Deny outbound HTTP requests to non-internal domains.",
+      "effect": "deny",
+      "action": "tool.call",
+      "where": "tool.type == 'http' && tool.endpoint !~ 'internal.corp'"
+    },
+    {
+      "id": "audit-high-risk-outputs",
+      "description": "Audit messages flagged as containing sensitive data.",
+      "effect": "audit",
+      "action": "message.send",
+      "where": "message.contains_pii == true"
+    }
+  ],
+  "observability": {
+    "log_level": "info",
+    "log_sink": "https://logs.internal.corp/agents/support-assistant",
+    "redact_sensitive": true,
+    "metrics_enabled": true,
+    "trace_enabled": false
+  }
+}

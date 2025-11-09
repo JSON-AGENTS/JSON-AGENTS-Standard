@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/extensions/audit.json",
+  "title": "Extension: Audit",
+  "description": "Custom auditing configuration for Agents.JSON manifests.",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "string",
+      "enum": ["minimal", "detailed", "full"],
+      "default": "minimal",
+      "description": "Determines the verbosity of auditing logs."
+    },
+    "include_payloads": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to include serialized message payloads in the audit log."
+    },
+    "destination": {
+      "type": "string",
+      "format": "uri",
+      "description": "Optional URI endpoint or sink for external audit logs."
+    },
+    "retention_days": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3650,
+      "default": 30,
+      "description": "Number of days to retain audit records."
+    },
+    "rotation_policy": {
+      "type": "string",
+      "enum": ["daily", "weekly", "size-based"],
+      "default": "weekly",
+      "description": "Defines how often audit logs are rotated or archived."
+    }
+  },
+  "required": ["level"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "x-audit": {
+        "$schema": "https://agents.json.org/schema/extensions/audit.json",
+        "level": "detailed",
+        "include_payloads": true,
+        "destination": "https://logs.example.net/audit",
+        "rotation_policy": "daily",
+        "retention_days": 90
+      }
+    }
+  ]
+}

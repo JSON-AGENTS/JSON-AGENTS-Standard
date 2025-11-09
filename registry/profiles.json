@@ -1,0 +1,30 @@
+{
+  "$id": "https://agents.json.org/registry/profiles.json",
+  "description": "Registry of recognized Agents.JSON profile identifiers.",
+  "version": "2025-11-09",
+  "profiles": [
+    {
+      "id": "core",
+      "required": true,
+      "description": "Base profile for agent identity, capabilities, tools, and modalities."
+    },
+    {
+      "id": "exec",
+      "required": false,
+      "description": "Execution profile describing runtime, entrypoint, and resource hints."
+    },
+    {
+      "id": "gov",
+      "required": false,
+      "description": "Governance profile for security, policies, and observability."
+    },
+    {
+      "id": "graph",
+      "required": false,
+      "description": "Graph profile for multi-agent compositions and routing."
+    }
+  ],
+  "notes": {
+    "extensions": "Additional profiles MAY be defined by separate documents using distinct IDs, e.g. 'realtime', 'evaluation', 'data-plane'."
+  }
+}

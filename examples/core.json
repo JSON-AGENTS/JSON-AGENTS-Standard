@@ -1,0 +1,20 @@
+{
+  "manifest_version": "1.0",
+  "profiles": ["core"],
+  "agent": {
+    "id": "ajson://example/minimal-core",
+    "name": "Minimal Core Agent",
+    "description": "A minimal example implementing only the core profile.",
+    "version": "1.0.0"
+  },
+  "capabilities": [
+    {
+      "id": "echo",
+      "description": "Echo back input text."
+    }
+  ],
+  "modalities": {
+    "input": ["text"],
+    "output": ["text"]
+  }
+}

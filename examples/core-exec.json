@@ -1,0 +1,49 @@
+{
+  "manifest_version": "1.0",
+  "profiles": ["core", "exec"],
+  "agent": {
+    "id": "ajson://example/core-exec-summarizer",
+    "name": "Summarizer Agent",
+    "description": "Summarizes input content.",
+    "version": "1.0.0",
+    "license": "Apache-2.0",
+    "tags": ["summarization", "example"]
+  },
+  "capabilities": [
+    {
+      "id": "summarization",
+      "description": "Summarize one or more input texts.",
+      "schema": "https://agents.json.org/schema/capabilities/summarization.json"
+    }
+  ],
+  "tools": [
+    {
+      "id": "tool://summarizer/local-model",
+      "name": "Local Summarization Model",
+      "description": "Internal model used for summarization.",
+      "type": "custom",
+      "metadata": {
+        "provider": "local"
+      }
+    }
+  ],
+  "modalities": {
+    "input": ["text"],
+    "output": ["text"]
+  },
+  "context": {
+    "window": 8192,
+    "strategy": "rolling",
+    "persistent": false
+  },
+  "runtime": {
+    "type": "python",
+    "language": "python",
+    "entrypoint": "summarizer.main:run",
+    "resources": {
+      "cpu_cores_min": 1,
+      "memory_mb_min": 512,
+      "accelerator": "none"
+    }
+  }
+}

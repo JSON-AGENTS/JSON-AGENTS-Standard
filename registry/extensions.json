@@ -1,0 +1,45 @@
+{
+  "$id": "https://agents.json.org/registry/extensions.json",
+  "title": "Agents.JSON Extension Registry",
+  "description": "Canonical registry of recognized and reusable extension namespaces (x-*).",
+  "version": "2025-11-09",
+  "extensions": [
+    {
+      "id": "x-audit",
+      "schema": "https://agents.json.org/schema/extensions/audit.json",
+      "description": "Adds configurable auditing and log retention to agents.",
+      "status": "stable",
+      "introduced_in": "1.0",
+      "maintainer": "Agents.JSON Core"
+    },
+    {
+      "id": "x-memory",
+      "schema": "https://agents.json.org/schema/extensions/memory.json",
+      "description": "Defines persistent or episodic memory storage and recall behavior.",
+      "status": "stable",
+      "introduced_in": "1.0",
+      "maintainer": "Agents.JSON Core"
+    },
+    {
+      "id": "x-research",
+      "schema": null,
+      "description": "Experimental namespace for academic or prototype fields.",
+      "status": "experimental",
+      "introduced_in": "1.0",
+      "maintainer": "Community"
+    },
+    {
+      "id": "x-embeddings",
+      "schema": null,
+      "description": "Optional embedding provider configuration for models using vectorization.",
+      "status": "draft",
+      "introduced_in": "1.1",
+      "maintainer": "Community"
+    }
+  ],
+  "notes": {
+    "policy": "All extensions must begin with `x-` and should be registered if reused across projects.",
+    "validation": "Manifests and validators must ignore unknown `x-*` extensions gracefully.",
+    "future": "Registry entries may include provenance and digital signatures for verified authorship."
+  }
+}

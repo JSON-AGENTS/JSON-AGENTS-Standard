@@ -1,0 +1,490 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/agents-json.json",
+  "title": "Agents.JSON Portable Agent Manifest (PAM)",
+  "type": "object",
+  "required": ["manifest_version", "agent"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Version of the Agents.JSON specification this manifest conforms to."
+    },
+    "profiles": {
+      "type": "array",
+      "description": "Declared profiles implemented by this manifest. If omitted, 'core' is implied.",
+      "items": {
+        "type": "string",
+        "enum": ["core", "exec", "gov", "graph"]
+      },
+      "uniqueItems": true
+    },
+    "agent": {
+      "$ref": "#/$defs/agent"
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Declared capabilities (functions/skills) of the agent.",
+      "items": { "$ref": "#/$defs/capability" }
+    },
+    "tools": {
+      "type": "array",
+      "description": "Tools the agent MAY invoke.",
+      "items": { "$ref": "#/$defs/tool" }
+    },
+    "modalities": {
+      "$ref": "#/$defs/modalities"
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtime"
+    },
+    "security": {
+      "$ref": "#/$defs/security"
+    },
+    "policies": {
+      "type": "array",
+      "description": "Declarative governance and behavior rules.",
+      "items": { "$ref": "#/$defs/policy" }
+    },
+    "observability": {
+      "$ref": "#/$defs/observability"
+    },
+    "graph": {
+      "$ref": "#/$defs/graph"
+    },
+    "signatures": {
+      "type": "array",
+      "description": "Optional cryptographic signatures over this manifest.",
+      "items": { "$ref": "#/$defs/signature" }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced, non-standard extensions. MUST NOT override core semantics.",
+      "additionalProperties": true
+    }
+  },
+  "patternProperties": {
+    "^x-": {
+      "description": "Vendor-specific extension fields. MUST be safely ignorable.",
+      "type": ["object", "array", "string", "number", "boolean", "null"]
+    }
+  },
+  "$defs": {
+    "agent": {
+      "type": "object",
+      "description": "Core agent identity and metadata.",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Globally unique identifier for this agent. URI RECOMMENDED."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name."
+        },
+        "description": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string",
+          "description": "Agent implementation or configuration version."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "organization": { "type": "string" },
+              "email": { "type": "string", "format": "email" }
+            }
+          }
+        },
+        "license": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "capability": {
+      "type": "object",
+      "description": "A declared functional capability of the agent.",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Capability identifier (e.g. 'summarization', 'routing')."
+        },
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional URI to a formal capability specification or schema."
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "description": "An external callable resource.",
+      "required": ["id", "name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Tool identifier (stable within this manifest/domain)."
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["http", "function", "plugin", "system", "mcp", "custom"]
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Endpoint or reference (e.g., URL, function name)."
+        },
+        "input_schema": {
+          "type": "object",
+          "description": "JSON Schema describing the tool input.",
+          "additionalProperties": true
+        },
+        "output_schema": {
+          "type": "object",
+          "description": "JSON Schema describing the tool output.",
+          "additionalProperties": true
+        },
+        "auth": {
+          "type": "object",
+          "description": "Reference to authentication mechanism (no raw secrets).",
+          "additionalProperties": false,
+          "properties": {
+            "method": {
+              "type": "string",
+              "description": "e.g. 'env', 'vault', 'oidc', 'api_key_ref'."
+            },
+            "ref": {
+              "type": "string",
+              "description": "Reference key or path (implementation-defined)."
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional implementation-specific metadata.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "modalities": {
+      "type": "object",
+      "description": "Declared input/output modalities for the agent.",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Supported input modalities (e.g. 'text', 'json', 'image').",
+          "uniqueItems": true
+        },
+        "output": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Supported output modalities.",
+          "uniqueItems": true
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Context window and memory hints.",
+      "additionalProperties": true,
+      "properties": {
+        "window": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hint for effective context window size."
+        },
+        "strategy": {
+          "type": "string",
+          "description": "e.g. 'rolling', 'episodic', 'conversation', implementation-defined."
+        },
+        "persistent": {
+          "type": "boolean",
+          "description": "Whether context is persisted across sessions."
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "description": "Execution environment description (Exec profile).",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["python", "node", "java", "go", "container", "wasm", "hosted", "custom"],
+          "description": "Primary runtime type."
+        },
+        "language": {
+          "type": "string",
+          "description": "Implementation language (e.g. 'python', 'typescript')."
+        },
+        "entrypoint": {
+          "type": "string",
+          "description": "Entrypoint reference (module:function, command, or image)."
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables (keys only; values SHOULD NOT be secrets).",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "object",
+          "description": "Resource hints for schedulers.",
+          "additionalProperties": false,
+          "properties": {
+            "cpu_cores_min": { "type": "number", "minimum": 0 },
+            "memory_mb_min": { "type": "number", "minimum": 0 },
+            "accelerator": {
+              "type": "string",
+              "description": "e.g. 'none', 'gpu', 'tpu', implementation-defined."
+            }
+          }
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Security and isolation configuration (Gov profile).",
+      "additionalProperties": false,
+      "properties": {
+        "sandbox": {
+          "type": "string",
+          "description": "e.g. 'process', 'container', 'vm', 'none'."
+        },
+        "network_zone": {
+          "type": "string",
+          "description": "Deployment/network classification (e.g. 'internal', 'trusted')."
+        },
+        "auth_context": {
+          "type": "string",
+          "description": "Reference to identity/authorization context."
+        },
+        "sensitive_data_handling": {
+          "type": "string",
+          "description": "Free-form policy text on PII/secrets/logging posture."
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "description": "Declarative policy rule.",
+      "required": ["id", "effect", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "effect": {
+          "type": "string",
+          "enum": ["allow", "deny", "audit", "notify"]
+        },
+        "action": {
+          "type": "string",
+          "description": "Targeted action category (e.g. 'tool.call', 'message.send')."
+        },
+        "where": {
+          "type": "string",
+          "description": "Expression evaluated by implementation to decide applicability."
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "description": "Logging, metrics, and tracing configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "log_level": {
+          "type": "string",
+          "description": "e.g. 'debug', 'info', 'warn', 'error'."
+        },
+        "log_sink": {
+          "type": "string",
+          "description": "Log endpoint or sink identifier."
+        },
+        "redact_sensitive": {
+          "type": "boolean"
+        },
+        "metrics_enabled": {
+          "type": "boolean"
+        },
+        "trace_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "graph": {
+      "type": "object",
+      "description": "Multi-agent graph (Graph profile).",
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/graph_node" },
+          "minItems": 1
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/graph_edge" }
+        },
+        "message_envelope": {
+          "type": "object",
+          "description": "Reference to shared message envelope schema.",
+          "additionalProperties": false,
+          "properties": {
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "required": ["nodes"]
+    },
+    "graph_node": {
+      "type": "object",
+      "description": "A node in the agent graph.",
+      "required": ["id", "ref"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Local node identifier within this graph."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference to an agent manifest or global agent ID."
+        },
+        "role": {
+          "type": "string",
+          "description": "Optional semantic role (e.g. 'router', 'faq', 'billing')."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "graph_edge": {
+      "type": "object",
+      "description": "Directed edge between graph nodes.",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Source node id."
+        },
+        "to": {
+          "type": "string",
+          "description": "Target node id."
+        },
+        "condition": {
+          "type": "string",
+          "description": "Routing condition expression over message envelope."
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "description": "Optional manifest signature (non-normative structure).",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "type": "string",
+          "description": "Signature algorithm identifier."
+        },
+        "value": {
+          "type": "string",
+          "description": "Encoded signature value."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "Key identifier."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "profiles": {
+            "contains": { "const": "exec" }
+          }
+        }
+      },
+      "then": {
+        "required": ["runtime"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "profiles": {
+            "contains": { "const": "gov" }
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          { "required": ["security"] },
+          { "required": ["policies"] },
+          { "required": ["observability"] }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "profiles": {
+            "contains": { "const": "graph" }
+          }
+        }
+      },
+      "then": {
+        "required": ["graph"]
+      }
+    }
+  ]
+}

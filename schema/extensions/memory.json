@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/extensions/memory.json",
+  "title": "Extension: Memory",
+  "description": "Extension for defining persistent, episodic, or hybrid memory configurations in Agents.JSON manifests.",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "description": "Identifier or driver name for the memory backend (e.g., vector-db, sql, filesystem)."
+    },
+    "engine": {
+      "type": "string",
+      "description": "Specific engine implementation (e.g., qdrant, chroma, postgres, redis)."
+    },
+    "capacity": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum number of memory entries or vectors stored before rotation or pruning."
+    },
+    "retention_policy": {
+      "type": "string",
+      "enum": ["none", "LRU", "TTL", "manual"],
+      "default": "LRU",
+      "description": "Strategy used for pruning old memories."
+    },
+    "embedding_model": {
+      "type": "string",
+      "description": "Optional model identifier used for vector embeddings."
+    },
+    "context_window": {
+      "type": "integer",
+      "minimum": 256,
+      "maximum": 65536,
+      "default": 8192,
+      "description": "Maximum token window for contextual recall during inference."
+    },
+    "sync_interval": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 60,
+      "description": "Frequency (in seconds) for persisting in-memory state to disk or external storage."
+    },
+    "encryption": {
+      "type": "object",
+      "description": "Optional encryption configuration for memory data.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "algorithm": {
+          "type": "string",
+          "enum": ["AES-256-GCM", "ChaCha20-Poly1305", "XChaCha20"],
+          "description": "Encryption algorithm used when enabled."
+        },
+        "key_ref": {
+          "type": "string",
+          "description": "URI or vault reference for encryption key."
+        }
+      }
+    }
+  },
+  "required": ["provider", "engine"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "x-memory": {
+        "$schema": "https://agents.json.org/schema/extensions/memory.json",
+        "provider": "vector-db",
+        "engine": "qdrant",
+        "capacity": 50000,
+        "retention_policy": "LRU",
+        "embedding_model": "text-embedding-3-small",
+        "context_window": 8192,
+        "sync_interval": 120,
+        "encryption": {
+          "enabled": true,
+          "algorithm": "XChaCha20",
+          "key_ref": "vault://memory/keys/default"
+        }
+      }
+    }
+  ]
+}

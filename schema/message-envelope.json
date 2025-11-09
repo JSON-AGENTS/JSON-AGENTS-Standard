@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/message-envelope.json",
+  "title": "Agents.JSON Message Envelope",
+  "description": "Canonical JSON structure for messages exchanged between agents.",
+  "type": "object",
+  "required": ["id", "from", "to", "timestamp", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this message instance (UUID or URI recommended)."
+    },
+    "from": {
+      "type": "string",
+      "description": "Agent or node ID that originated this message."
+    },
+    "to": {
+      "type": ["string", "array"],
+      "description": "Intended recipient(s) of this message (one or more node IDs).",
+      "items": { "type": "string" }
+    },
+    "reply_to": {
+      "type": "string",
+      "description": "Optional message ID to which this is a response."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the message was created."
+    },
+    "intent": {
+      "type": "string",
+      "description": "Optional high-level intent label extracted from message content."
+    },
+    "payload": {
+      "description": "The message body or structured content exchanged between agents.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" },
+        { "type": "array" }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata such as routing hints or MIME information.",
+      "additionalProperties": true,
+      "properties": {
+        "content_type": {
+          "type": "string",
+          "description": "MIME type or content descriptor (e.g. 'text/plain', 'application/json')."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "normal", "high"],
+          "default": "normal"
+        },
+        "trace_id": {
+          "type": "string",
+          "description": "Optional correlation ID for distributed tracing."
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Optional cryptographic or identity context attached to message.",
+      "additionalProperties": false,
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "Base64-encoded signature or verification token."
+        },
+        "key_id": {
+          "type": "string",
+          "description": "Identifier for the key used to sign this message."
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced extension data following the Agents.JSON extension rules.",
+      "additionalProperties": true
+    }
+  },
+  "examples": [
+    {
+      "id": "msg-001",
+      "from": "router",
+      "to": "faq",
+      "timestamp": "2025-11-09T12:34:56Z",
+      "intent": "faq",
+      "payload": {
+        "question": "What is Agents.JSON?",
+        "language": "en"
+      },
+      "metadata": {
+        "content_type": "application/json",
+        "priority": "normal",
+        "trace_id": "trace-12345"
+      }
+    }
+  ]
+}

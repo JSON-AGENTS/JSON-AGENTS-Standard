@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/capabilities/summarization.json",
+  "title": "Capability: Summarization",
+  "description": "Standardized declaration for text summarization capability.",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "const": "summarization"
+    },
+    "description": {
+      "type": "string",
+      "default": "Summarize one or more input texts."
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "Expected input structure for summarization.",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The text to summarize."
+        },
+        "target_length": {
+          "type": "string",
+          "enum": ["short", "medium", "long"],
+          "description": "Hint for summary length."
+        },
+        "language": {
+          "type": "string",
+          "description": "BCP 47 language tag of the input text.",
+          "default": "en"
+        }
+      },
+      "required": ["text"]
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "Standardized summarization output format.",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Generated summary."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Optional confidence score."
+        }
+      },
+      "required": ["summary"]
+    }
+  },
+  "examples": [
+    {
+      "id": "summarization",
+      "description": "Summarize product documentation."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "manifest_version": "1.0",
+  "profiles": ["core", "exec", "gov", "graph"],
+  "agent": {
+    "id": "ajson://example/router-hub",
+    "name": "Router Hub",
+    "description": "Routes incoming queries to specialized downstream agents.",
+    "version": "1.0.0",
+    "tags": ["router", "orchestration"]
+  },
+  "capabilities": [
+    {
+      "id": "routing",
+      "description": "Select appropriate downstream agent based on intent.",
+      "schema": "https://agents.json.org/schema/capabilities/routing.json"
+    }
+  ],
+  "tools": [],
+  "modalities": {
+    "input": ["text"],
+    "output": ["text"]
+  },
+  "context": {
+    "window": 4096,
+    "strategy": "stateless",
+    "persistent": false
+  },
+  "runtime": {
+    "type": "node",
+    "language": "typescript",
+    "entrypoint": "dist/router.js",
+    "resources": {
+      "cpu_cores_min": 1,
+      "memory_mb_min": 512,
+      "accelerator": "none"
+    }
+  },
+  "security": {
+    "sandbox": "process",
+    "network_zone": "trusted"
+  },
+  "observability": {
+    "log_level": "info",
+    "log_sink": "https://logs.example.net/agents/router-hub",
+    "redact_sensitive": true,
+    "metrics_enabled": true,
+    "trace_enabled": true
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "router",
+        "ref": "ajson://example/router-hub",
+        "role": "router"
+      },
+      {
+        "id": "faq",
+        "ref": "ajson://example/faq-agent",
+        "role": "faq"
+      },
+      {
+        "id": "billing",
+        "ref": "ajson://example/billing-agent",
+        "role": "billing"
+      }
+    ],
+    "edges": [
+      {
+        "from": "router",
+        "to": "faq",
+        "condition": "message.intent == 'faq'"
+      },
+      {
+        "from": "router",
+        "to": "billing",
+        "condition": "message.intent == 'billing'"
+      }
+    ],
+    "message_envelope": {
+      "schema": "https://agents.json.org/schema/message-envelope.json"
+    }
+  }
+}

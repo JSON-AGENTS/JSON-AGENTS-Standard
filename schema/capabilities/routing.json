@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents.json.org/schema/capabilities/routing.json",
+  "title": "Capability: Routing",
+  "description": "Standardized declaration for intent-based or rule-based routing between agents or tools.",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "const": "routing"
+    },
+    "description": {
+      "type": "string",
+      "default": "Route messages to downstream agents or tools based on conditions."
+    },
+    "input_schema": {
+      "type": "object",
+      "description": "Input for routing decisions.",
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "type": "object",
+          "description": "Incoming message envelope or subset thereof."
+        },
+        "candidates": {
+          "type": "array",
+          "description": "List of possible targets (agent/node IDs).",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["message", "candidates"]
+    },
+    "output_schema": {
+      "type": "object",
+      "description": "Routing decision result.",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Selected target ID."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Explanation or rationale for the routing decision."
+        },
+        "alternatives": {
+          "type": "array",
+          "description": "Optional ranked alternative targets.",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["target"]
+    }
+  },
+  "examples": [
+    {
+      "id": "routing",
+      "description": "Route between faq, billing, or support agents."
+    }
+  ]
+}
